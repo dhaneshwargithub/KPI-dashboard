@@ -1,0 +1,137 @@
+/* General Dashboard Styling */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light background for better contrast */
+}
+
+/* KPI Section Styling */
+.kpi-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.kpi-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.kpi-item {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative; /* Positioning for tooltip */
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out; /* Add transition for smooth effect */
+}
+
+/* Hover Effect for KPI Item */
+.kpi-item:hover {
+  box-shadow: 0 0 20px 10px rgba(0, 150, 136, 0.5); /* Purple glow effect */
+  transform: scale(1.05); /* Slightly enlarge the KPI item on hover */
+}
+
+/* Tooltip Container */
+.kpi-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px; /* Adjust as needed */
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  white-space: normal;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1000;
+  text-align: left;
+}
+
+/* Show Tooltip on Hover */
+.kpi-item:hover .kpi-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* KPI Item Heading */
+.kpi-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+/* KPI Item Text */
+.kpi-item p {
+  font-size: 1.5em;
+  margin: 10px 0 0;
+}
+
+/* Color Coding for KPI Values */
+.kpi-item p.currency {
+  color: green; /* Currency values in green */
+}
+
+.kpi-item p.number {
+  color: blue; /* Numbers/Percentages in blue */
+}
+
+/* Chart Section Styling */
+.chart-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px; /* Space above charts */
+}
+
+/* Adjusted Chart Item Styling */
+.chart-item {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+  /* Maintain a consistent aspect ratio for charts */
+  aspect-ratio: 1.5; /* 1.5:1 ratio, adjust as needed */
+  position: relative; /* Ensure positioning for better canvas alignment */
+}
+
+/* Ensure Proper Alignment for Chart Titles */
+.chart-item h3 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+/* Ensuring Canvas Charts Display Correctly */
+canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .kpi-row {
+    flex-direction: column;
+  }
+
+  .kpi-item {
+    min-width: auto;
+  }
+
+  .chart-item {
+    min-width: 100%;
+    aspect-ratio: auto; /* Remove fixed aspect ratio for smaller screens */
+  }
+}

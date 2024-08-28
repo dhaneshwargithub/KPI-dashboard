@@ -1,0 +1,29 @@
+.app-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  header {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  nav {
+    margin: 10px 0;
+  }
+  
+  nav a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  nav a.active {
+    font-weight: bold;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
