@@ -1,6 +1,6 @@
 # KPI-dashboard
 
-* In order to execute the forecast in the dashboard, follow these steps:
+In order to execute the forecast in the dashboard, follow these steps:
 
 
 After extracting the zip files, download Anaconda Navigator.
