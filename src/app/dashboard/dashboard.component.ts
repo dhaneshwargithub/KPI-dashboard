@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
   returnOnInvestment = 0;
 
   pollingInterval = 60000; // 60 seconds
+  isDarkMode = false; // Initialize dark mode state
 
   constructor(private couchdbService: CouchdbService) {}
 
@@ -142,18 +143,16 @@ export class DashboardComponent implements OnInit {
   }
 
   calculateAverageFulfillmentTime(): number | null {
-  
     const validRecords = this.salesData.filter(record => {
       const orderDate = new Date(record.Order_Date);
       const shipDate = new Date(record.Ship_Date);
       return !isNaN(orderDate.getTime()) && !isNaN(shipDate.getTime());
     });
-  
+
     if (validRecords.length === 0) {
-      
       return null;
     }
-  
+
     // Calculate fulfillment times in days
     const fulfillmentTimes = validRecords.map(record => {
       const orderDate = new Date(record.Order_Date);
@@ -161,8 +160,7 @@ export class DashboardComponent implements OnInit {
       const diffInMs = shipDate.getTime() - orderDate.getTime();
       return diffInMs / (1000 * 60 * 60 * 24); // Convert ms to days
     });
-  
-  
+
     function calculateMedian(values: number[]): number {
       if (values.length === 0) return 0;
       const sorted = values.slice().sort((a, b) => a - b);
@@ -173,10 +171,8 @@ export class DashboardComponent implements OnInit {
         return sorted[middle];
       }
     }
-  
-    
+
     const medianFulfillmentTime = calculateMedian(fulfillmentTimes);
-  
 
     const meanFulfillmentTime = fulfillmentTimes.reduce((a, b) => a + b, 0) / fulfillmentTimes.length;
     
@@ -188,183 +184,161 @@ export class DashboardComponent implements OnInit {
   }
 
   renderCharts() {
+    const axisLabelColor = this.isDarkMode ? '#ffffff' : '#000000'; // White for dark mode, black for light mode
+    const gridLineColor = this.isDarkMode ? '#444444' : '#dddddd'; // Adjusted grid line color for dark mode
+
     this.renderChart('salesTrendChart', 'line', {
-      datasets: [{
-        label: 'Sales Trend',
-        data: this.salesTrend,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        fill: false
-      }]
+        datasets: [{
+            label: 'Sales Trend',
+            data: this.salesTrend,
+            borderColor: 'rgba(0, 255, 255, 1)', 
+            backgroundColor: 'rgba(0, 255, 255, 0.2)', 
+            fill: false
+        }]
     }, {
-      scales: {
-        x: {
-          type: 'time',
-          time: {
-            unit: 'month'
-          },
-          ticks: {
-            callback: function(value: any) {
-              return new Date(value).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'month'
+                },
+                ticks: {
+                    color: axisLabelColor, // X-axis label color
+                },
+                grid: {
+                    color: gridLineColor, // Grid line color
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: axisLabelColor, // Y-axis label color
+                },
+                grid: {
+                    color: gridLineColor, // Grid line color
+                }
             }
-          }
-        },
-        y: {
-          beginAtZero: true
         }
-      },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem: any) {
-              return `Sales: ${tooltipItem.raw.y.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`;
-            }
-          }
-        }
-      }
     });
 
     this.renderChart('salesByRegionChart', 'bar', {
-      labels: Object.keys(this.salesByRegion),
-      datasets: [{
-        label: 'Sales by Region',
-        data: Object.values(this.salesByRegion),
-        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-        borderColor: 'rgba(153, 102, 255, 1)',
-        borderWidth: 1
-      }]
+        labels: Object.keys(this.salesByRegion),
+        datasets: [{
+            label: 'Sales by Region',
+            data: Object.values(this.salesByRegion),
+            backgroundColor: 'rgba(153, 102, 255, 0.8)', 
+            borderColor: 'rgba(153, 102, 255, 1)', 
+            borderWidth: 1
+        }]
     }, {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem: any) {
-              return `Sales: ${tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`;
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: axisLabelColor, // Y-axis label color
+                },
+                grid: {
+                    color: gridLineColor, // Grid line color
+                }
+            },
+            x: {
+                ticks: {
+                    color: axisLabelColor, // X-axis label color
+                },
+                grid: {
+                    color: gridLineColor, // Grid line color
+                }
             }
-          }
         }
-      }
     });
 
     this.renderChart('topCategoriesChart', 'pie', {
-      labels: Object.keys(this.topCategories),
-      datasets: [{
-        label: 'Top Categories by Sales',
-        data: Object.values(this.topCategories),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }]
+        labels: Object.keys(this.topCategories),
+        datasets: [{
+            label: 'Top Categories by Sales',
+            data: Object.values(this.topCategories),
+            backgroundColor: Object.keys(this.topCategories).map(category => this.getCategoryColor(category)), 
+            borderColor: Object.keys(this.topCategories).map(category => this.getCategoryColor(category, true)), 
+            borderWidth: 1
+        }]
     }, {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem: any) {
-              return `Sales: ${tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`;
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: axisLabelColor // Legend labels color
+                }
             }
-          }
         }
-      }
     });
 
     this.renderChart('profitDistributionChart', 'doughnut', {
-      labels: Object.keys(this.profitDistribution),
-      datasets: [{
-        label: 'Profit Distribution by Country',
-        data: Object.values(this.profitDistribution),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }]
+        labels: Object.keys(this.profitDistribution),
+        datasets: [{
+            label: 'Profit Distribution by Country',
+            data: Object.values(this.profitDistribution),
+            backgroundColor: Object.keys(this.profitDistribution).map(country => this.getCategoryColor(country)), 
+            borderColor: Object.keys(this.profitDistribution).map(country => this.getCategoryColor(country, true)), 
+            borderWidth: 1
+        }]
     }, {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem: any) {
-              return `Profit: ${tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`;
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: axisLabelColor // Legend labels color
+                }
             }
-          }
         }
-      }
     });
 
     if (Object.keys(this.monthlyRevenue).length > 0) {
-      // Wait for the view to be fully rendered
-      setTimeout(() => {
-        const ctx = document.getElementById('monthlyRevenueBreakdownChart') as HTMLCanvasElement;
-        if (ctx) {
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: Object.keys(this.monthlyRevenue),
-              datasets: Object.keys(this.monthlyRevenue[Object.keys(this.monthlyRevenue)[0]]).map(category => ({
-                label: category,
-                data: Object.keys(this.monthlyRevenue).map(month => this.monthlyRevenue[month][category] || 0),
-                backgroundColor: this.getCategoryColor(category),
-                borderColor: this.getCategoryColor(category, true),
-                borderWidth: 1
-              }))
-            },
-            options: {
-              scales: {
-                x: {
-                  stacked: true
-                },
-                y: {
-                  beginAtZero: true,
-                  stacked: true
-                }
-              },
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    label: function(tooltipItem: any) {
-                      return `Sales: ${tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`;
+        setTimeout(() => {
+            const ctx = document.getElementById('monthlyRevenueBreakdownChart') as HTMLCanvasElement;
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(this.monthlyRevenue),
+                        datasets: Object.keys(this.monthlyRevenue[Object.keys(this.monthlyRevenue)[0]]).map(category => ({
+                            label: category,
+                            data: Object.keys(this.monthlyRevenue).map(month => this.monthlyRevenue[month][category] || 0),
+                            backgroundColor: this.getCategoryColor(category), 
+                            borderColor: this.getCategoryColor(category, true), 
+                            borderWidth: 1
+                        }))
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                stacked: true,
+                                ticks: {
+                                    color: axisLabelColor // X-axis label color
+                                },
+                                grid: {
+                                    color: gridLineColor // Grid line color
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                stacked: true,
+                                ticks: {
+                                    color: axisLabelColor // Y-axis label color
+                                },
+                                grid: {
+                                    color: gridLineColor // Grid line color
+                                }
+                            }
+                        }
                     }
-                  }
-                }
-              }
+                });
+            } else {
+                console.error('Canvas element for monthlyRevenueChart not found.');
             }
-          });
-        } else {
-          console.error('Canvas element for monthlyRevenueChart not found.');
-        }
-      });
+        });
     }
-  }
+}
+
 
   renderChart(chartId: string, type: ChartType, data: any, options: any) {
     const ctx = document.getElementById(chartId) as HTMLCanvasElement;
@@ -378,16 +352,28 @@ export class DashboardComponent implements OnInit {
   }
 
   getCategoryColor(category: string, border = false): string {
-    const colors: { [key: string]: string } = {
-      'Category1': 'rgba(255, 99, 132, 0.2)',
-      'Category2': 'rgba(54, 162, 235, 0.2)',
-      'Category3': 'rgba(255, 206, 86, 0.2)',
-      'Category4': 'rgba(75, 192, 192, 0.2)',
-      'Category5': 'rgba(153, 102, 255, 0.2)',
-      'Category6': 'rgba(255, 159, 64, 0.2)',
-      'Category7': 'rgba(199, 199, 199, 0.2)',
-      'Category8': 'rgba(83, 102, 255, 0.2)',
+    const darkThemeColors: { [key: string]: string } = {
+      'Category1': 'rgba(255, 99, 132, 0.6)',
+      'Category2': 'rgba(54, 162, 235, 0.6)',
+      'Category3': 'rgba(255, 206, 86, 0.6)',
+      'Category4': 'rgba(75, 192, 192, 0.6)',
+      'Category5': 'rgba(153, 102, 255, 0.6)',
+      'Category6': 'rgba(255, 159, 64, 0.6)',
+      'Category7': 'rgba(199, 199, 199, 0.6)',
+      'Category8': 'rgba(83, 102, 255, 0.6)',
     };
+    
+    const lightThemeColors: { [key: string]: string } = {
+      'Category1': 'rgba(255, 99, 132, 0.6)',
+      'Category2': 'rgba(54, 162, 235, 0.6)',
+      'Category3': 'rgba(255, 206, 86, 0.6)',
+      'Category4': 'rgba(75, 192, 192, 0.6)',
+      'Category5': 'rgba(153, 102, 255, 0.6)',
+      'Category6': 'rgba(255, 159, 64, 0.6)',
+      'Category7': 'rgba(199, 199, 199, 0.6)',
+      'Category8': 'rgba(83, 102, 255, 0.6)',
+    };
+
     const borderColors: { [key: string]: string } = {
       'Category1': 'rgba(255, 99, 132, 1)',
       'Category2': 'rgba(54, 162, 235, 1)',
@@ -399,10 +385,24 @@ export class DashboardComponent implements OnInit {
       'Category8': 'rgba(83, 102, 255, 1)',
     };
 
+    const colors = this.isDarkMode ? darkThemeColors : lightThemeColors;
+    
     if (!colors[category]) {
-      const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${border ? 1 : 0.2})`;
-      return border ? randomColor.replace('0.2', '1') : randomColor;
+      const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${border ? 1 : 0.6})`;
+      return border ? randomColor.replace('0.6', '1') : randomColor;
     }
-    return border ? borderColors[category] || 'rgba(0,0,0,1)' : colors[category] || 'rgba(0,0,0,0.2)';
+
+    return border ? colors[category] || 'rgba(0,0,0,1)' : colors[category] || 'rgba(0,0,0,0.6)';
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    const dashboard = document.querySelector('.dashboard');
+    if (this.isDarkMode) {
+      dashboard?.classList.add('dark-theme');
+    } else {
+      dashboard?.classList.remove('dark-theme');
+    }
+    this.renderCharts(); // Re-render charts to apply dark mode styles
   }
 }
