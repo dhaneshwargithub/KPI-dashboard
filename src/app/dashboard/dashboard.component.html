@@ -1,82 +1,91 @@
-<!-- KPI Section -->
-<div class="kpi-section">
-  <div class="kpi-row">
-    <div class="kpi-item">
-      <h3>Total Sales</h3>
-      <p class="currency">{{ totalSales | currency: 'USD' }}</p>
-      <div class="kpi-tooltip">
-        This KPI shows the total revenue generated from sales. It is calculated as the sum of all sales amounts over the selected period.
-      </div>
-    </div>
-    <div class="kpi-item">
-      <h3>Total Profit</h3>
-      <p class="currency">{{ totalProfit | currency: 'USD' }}</p>
-      <div class="kpi-tooltip">
-        This KPI indicates the total profit made from sales after deducting costs and expenses. It is computed as the total sales minus the total costs.
-      </div>
-    </div>
-    <div class="kpi-item">
-      <h3>Profit Margin</h3>
-      <p class="number">{{ profitMargin | number: '1.0-2' }}%</p>
-      <div class="kpi-tooltip">
-        The profit margin percentage represents the portion of sales revenue that exceeds the costs. It is calculated as (Total Profit / Total Sales) * 100.
-      </div>
-    </div>
+<div class="dashboard">
+  <!-- Dark Mode Toggle Button -->
+  <div class="toggle-container">
+    <button class="btn-dark-mode" (click)="toggleDarkMode()">
+      <i class="fas fa-moon"></i>
+    </button>
   </div>
-  <div class="kpi-row">
-    <div class="kpi-item">
-      <h3>Customer Acquisition Cost</h3>
-      <p class="currency">{{ customerAcquisitionCost | currency: 'USD' }}</p>
-      <div class="kpi-tooltip">
-        This KPI measures the average cost incurred to acquire a new customer. It is calculated by dividing the total cost of marketing and sales by the number of new customers.
-      </div>
-    </div>
-    <div class="kpi-item">
-      <h3>Customer Lifetime Value</h3>
-      <p class="currency">{{ customerLifetimeValue | currency: 'USD' }}</p>
-      <div class="kpi-tooltip">
-        This KPI represents the total revenue expected from a customer over their entire relationship with the company. It is calculated as total profit divided by the number of customers.
-      </div>
-    </div>
-    <div class="kpi-item">
-      <h3>Order Fulfillment Time</h3>
-      <p class="number">{{ averageFulfillmentTime | number: '1.0-0' }} days</p>
-      <div class="kpi-tooltip">
-        This KPI measures the average time taken to fulfill an order from the moment it is placed. It is an important metric for evaluating operational efficiency.
-      </div>
-    </div>
-    <div class="kpi-item">
-      <h3>Return on Investment</h3>
-      <p class="number">{{ returnOnInvestment | number: '1.0-2' }}%</p>
-      <div class="kpi-tooltip">
-        This KPI indicates the return on investment as a percentage. It is calculated as (Total Profit / Total Sales) * 100, showing the efficiency of investments.
-      </div>
-    </div>
-  </div>
-</div>
+  
+  
 
+  <!-- KPI Section -->
+  <div class="kpi-section">
+    <div class="kpi-row">
+      <div class="kpi-item">
+        <h3>Total Sales</h3>
+        <p class="currency">{{ totalSales | currency: 'USD' }}</p>
+        <div class="kpi-tooltip">
+          This KPI shows the total revenue generated from sales. It is calculated as the sum of all sales amounts over the selected period.
+        </div>
+      </div>
+      <div class="kpi-item">
+        <h3>Total Profit</h3>
+        <p class="currency">{{ totalProfit | currency: 'USD' }}</p>
+        <div class="kpi-tooltip">
+          This KPI indicates the total profit made from sales after deducting costs and expenses. It is computed as the total sales minus the total costs.
+        </div>
+      </div>
+      <div class="kpi-item">
+        <h3>Profit Margin</h3>
+        <p class="number">{{ profitMargin | number: '1.0-2' }}%</p>
+        <div class="kpi-tooltip">
+          The profit margin percentage represents the portion of sales revenue that exceeds the costs. It is calculated as (Total Profit / Total Sales) * 100.
+        </div>
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-item">
+        <h3>Customer Acquisition Cost</h3>
+        <p class="currency">{{ customerAcquisitionCost | currency: 'USD' }}</p>
+        <div class="kpi-tooltip">
+          This KPI measures the average cost incurred to acquire a new customer. It is calculated by dividing the total cost of marketing and sales by the number of new customers.
+        </div>
+      </div>
+      <div class="kpi-item">
+        <h3>Customer Lifetime Value</h3>
+        <p class="currency">{{ customerLifetimeValue | currency: 'USD' }}</p>
+        <div class="kpi-tooltip">
+          This KPI represents the total revenue expected from a customer over their entire relationship with the company. It is calculated as total profit divided by the number of customers.
+        </div>
+      </div>
+      <div class="kpi-item">
+        <h3>Order Fulfillment Time</h3>
+        <p class="number">{{ averageFulfillmentTime | number: '1.0-0' }} days</p>
+        <div class="kpi-tooltip">
+          This KPI measures the average time taken to fulfill an order from the moment it is placed. It is an important metric for evaluating operational efficiency.
+        </div>
+      </div>
+      <div class="kpi-item">
+        <h3>Return on Investment</h3>
+        <p class="number">{{ returnOnInvestment | number: '1.0-2' }}%</p>
+        <div class="kpi-tooltip">
+          This KPI indicates the return on investment as a percentage. It is calculated as (Total Profit / Total Sales) * 100, showing the efficiency of investments.
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- Chart Containers -->
-<div class="chart-section">
-  <div class="chart-item">
-    <h3>Sales Trend</h3>
-    <canvas id="salesTrendChart"></canvas>
-  </div>
-  <div class="chart-item">
-    <h3>Sales by Region</h3>
-    <canvas id="salesByRegionChart"></canvas>
-  </div>
-  <div class="chart-item">
-    <h3>Top Categories by Sales</h3>
-    <canvas id="topCategoriesChart"></canvas>
-  </div>
-  <div class="chart-item">
-    <h3>Profit Distribution by Country</h3>
-    <canvas id="profitDistributionChart"></canvas>
-  </div>
-  <!-- Removed the Top Performing Products chart -->
-  <div class="chart-item">
-    <h3>Monthly Revenue Breakdown</h3>
-    <canvas id="monthlyRevenueBreakdownChart"></canvas>
+  <!-- Chart Containers -->
+  <div class="chart-section">
+    <div class="chart-item">
+      <h3>Sales Trend</h3>
+      <canvas id="salesTrendChart"></canvas>
+    </div>
+    <div class="chart-item">
+      <h3>Sales by Region</h3>
+      <canvas id="salesByRegionChart"></canvas>
+    </div>
+    <div class="chart-item">
+      <h3>Top Categories by Sales</h3>
+      <canvas id="topCategoriesChart"></canvas>
+    </div>
+    <div class="chart-item">
+      <h3>Profit Distribution by Country</h3>
+      <canvas id="profitDistributionChart"></canvas>
+    </div>
+    <div class="chart-item">
+      <h3>Monthly Revenue Breakdown</h3>
+      <canvas id="monthlyRevenueBreakdownChart"></canvas>
+    </div>
   </div>
 </div>
